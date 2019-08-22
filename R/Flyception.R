@@ -136,7 +136,7 @@ FlyceptionR <- function(dir, prefix, autopos=T, interaction=T, reuse=T,
                           fvref=fvref,
                           output=output_prefix,
                           center=c(0, 0),
-                          zoom=0.95,
+                          zoom=zoom,
                           autopos=F)
 
   ## Part 9. Image registration
