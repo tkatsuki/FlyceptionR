@@ -11,7 +11,20 @@
 analyze_trajectories <- function(dir, output, fpsfv, interaction=F){
   fvtrj <- read.table(paste0(dir, list.files(dir, pattern="fv-traj-")))
   trj <- fvtrj[,c(2,3)]
-  trja <- read.table(paste0(dir, list.files(dir, pattern="av-traj-")), colClasses = "character")[,2:5]
+  trja <- read.table(paste0(dir, list.files(dir, pattern="av-traj-")), colClasses = "character")
+  trjancol <- ncol(trja)
+
+  # Read trajactory coordinates from av-trj file
+  if(trjancol==3|trjancol==4){
+    trja <- trja[,2:3]
+  }else if(trjancol==6|trjancol==7){
+    trja <- trja[,c(2,3,5,6)]
+  }else if(trjancol==5) {
+    trja <- trja[,c(2,3,4,5)]
+  }else {
+    stop("Unknown av-trj format")
+  }
+
   trja <- as.data.frame(sapply(trja,gsub,pattern="\\[",replacement=""), stringsAsFactors=F)
   trja <- as.data.frame(sapply(trja,gsub,pattern="\\]",replacement=""), stringsAsFactors=F)
   trja <- sapply(trja, as.numeric)
