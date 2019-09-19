@@ -28,6 +28,7 @@ align_cameras <- function(flref, fvref, output, center=c(0, 0), zoom=1, autopos=
                           (round((dim(flref)[2]-dim(fvrefrs)[2])/2)+dim(fvrefrs)[2]-1)]
     }
     flrefpadmv <- translate(flrefpad, center)
+    flrefpadmv = flrefpadmv[,] # convert from niftiimage to normal image
     display(flrefpadmv)
     display(normalize(fvrefrs + flrefpadmv))
     writeImage(normalize(fvrefrs + flrefpadmv), file=paste0(output, "_aligned.png"))
@@ -63,8 +64,8 @@ align_cameras <- function(flref, fvref, output, center=c(0, 0), zoom=1, autopos=
     }
 
     flrefpadmv <- translate(flrefpad, center)
+    flrefpadmv = flrefpadmv[,]  # convert from niftiimage to normal image
     writeImage(normalize(fvrefrs + flrefpadmv), file=paste0(output, "_aligned.png"))
-
   }
   message(sprintf("Center offset: x=%d, y=%d", center[1], center[2]))
   return(center)
