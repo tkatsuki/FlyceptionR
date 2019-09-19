@@ -29,7 +29,9 @@ sync_frames <- function(dir, fluo_flash, fly_flash, arena_flash, output, reuse=F
 
   # Elapsed time (in ms) of each frame from the fly view camera
   timestampusec <- as.numeric(log[grep("TimeStamp", log)+1])
-  elapsedtimefv <- (timestampusec - timestampusec[1])/1000
+  # fix rollover of raw timestamp (after 2^31 usec, time stamp rolls over to 0)
+  timestampusec_fix =  timestampusec + (timestampusec < timestampusec[1]) * 2^31
+  elapsedtimefv <- (timestampusec_fix - timestampusec_fix[1])/1000
   elapsedtimefvflash <- elapsedtimefv - elapsedtimefv[fly_flash$fvflashes[1]]
   fpsfv <- round(length(elapsedtimefv)/((tail(elapsedtimefv, n=1) - elapsedtimefv[1])/1000))
   message(paste("fly-view fps:", fpsfv))
