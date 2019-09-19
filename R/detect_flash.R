@@ -28,6 +28,8 @@ detect_flash <- function(input, output, type=c("fluo", "fly", "arena"), flash_th
     }
 
     flflashes <- which(flimgint > flash_thresh)
+    # correct for double-flashes from rolling shutter (pick second from each pair)
+    flflashes = c(flflashes[which(diff(flflashes) != 1)], tail(flflashes,1))
     flimgflash <- min(flflashes)
     if(flimgflash==Inf) stop("Flash was not detected in fluo-view.")
     message(sprintf("Flash was detected in fluo-view frames: %s", paste(flflashes, collapse=" ")))
