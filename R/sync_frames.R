@@ -23,7 +23,7 @@ sync_frames <- function(dir, fluo_flash, fly_flash, arena_flash, output, reuse=F
   # Elapsed time (in ms) of each frame from the fluorescence camera relative to the flash
   elapsedtimefl <- metadata[grep("ElapsedTime-ms", metadata)+2]
   elapsedtimefl <- as.numeric(substr(elapsedtimefl, 1, nchar(elapsedtimefl)-1))
-  fpsfl <- round(length(elapsedtimefl)/tail(elapsedtimefl, n=1)*1000)
+  fpsfl <- round((length(elapsedtimefl)-1)/(tail(elapsedtimefl, n=1) - elapsedtimefl[1])*1000)
   message(paste("fluo-view fps:", fpsfl))
   elapsedtime <- elapsedtimefl - elapsedtimefl[fluo_flash$fvflashes[1]]
 
@@ -33,7 +33,7 @@ sync_frames <- function(dir, fluo_flash, fly_flash, arena_flash, output, reuse=F
   timestampusec_fix =  timestampusec + (timestampusec < timestampusec[1]) * 2^31
   elapsedtimefv <- (timestampusec_fix - timestampusec_fix[1])/1000
   elapsedtimefvflash <- elapsedtimefv - elapsedtimefv[fly_flash$fvflashes[1]]
-  fpsfv <- round(length(elapsedtimefv)/((tail(elapsedtimefv, n=1) - elapsedtimefv[1])/1000))
+  fpsfv <- round((length(elapsedtimefv) - 1)/((tail(elapsedtimefv, n=1) - elapsedtimefv[1])/1000))
   message(paste("fly-view fps:", fpsfv))
   framediff <- diff(elapsedtimefvflash)
 
@@ -52,7 +52,7 @@ sync_frames <- function(dir, fluo_flash, fly_flash, arena_flash, output, reuse=F
   avtimestampmsec <- 1/8000*as.numeric(avtimestampcnt)*1000
   elapsedtimeav <- (avtimestampsec + avtimestampmsec) - (avtimestampsec[1] + avtimestampmsec[1])
   elapsedtimeavflash <- elapsedtimeav - elapsedtimeav[arena_flash$avflashes[1]]
-  fpsav <- round(length(elapsedtimeav)/((tail(elapsedtimeav, n=1) - elapsedtimeav[1])/1000))
+  fpsav <- round((length(elapsedtimeav)-1)/((tail(elapsedtimeav, n=1) - elapsedtimeav[1])/1000))
   message(paste("arena-view fps:", fpsav))
 
   # Align frames between fly-view and fluo-view
