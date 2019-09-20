@@ -21,7 +21,7 @@ register_images <- function(fvimgl, flimgrt, fvimgbwbrfh, angles, output, zoom, 
     centermask <- drawCircle(matrix(0,dim(fvimgli)[1],dim(fvimgli)[2]), dim(fvimgli)[1]/2,
                              dim(fvimgli)[2]/2, dim(fvimgli)[1]/2-1, col=1, fill=1)
     # Create first image, which will be the target in registration
-    fvimgrt1sti <- rotate(fvimgli[,,1], angles[frid[1]]*180/pi, output.dim=dim(fvimgli)[1:2])
+    fvimgrt1sti <- EBImage::rotate(fvimgli[,,1], angles[frid[1]]*180/pi, output.dim=dim(fvimgli)[1:2])
     # Prepare cores
     if(cores!=1){
       library(doParallel)
