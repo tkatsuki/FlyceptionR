@@ -154,7 +154,7 @@ if(dim(flimg)[1] > 130){
   flimg <- flimg[round((dim(flimg)[1] - 128)/2):(round((dim(flimg)[1]/2+128/2))-1),
                  round((dim(flimg)[2] - 128)/2):(round((dim(flimg)[2]/2+128/2))-1),]
 }
-flimgrt <- rotate(flip(flimg), rotate_camera)
+flimgrt <- EBImage::rotate(EBImage::flip(flimg), rotate_camera)
 # Load fly-view camera images
 fvimgl <- dipr::readFMF(fly_view_fmf, frames=frid)
 # Load arena-view camera images
