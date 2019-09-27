@@ -108,6 +108,7 @@ FlyceptionR <- function(dir, prefix, autopos=T, interaction=T, reuse=T,
     frida <- syncing$frida[FOI[1]:FOI[2]]
   }else{
     message("All frames will be analyzed.")
+    flimg <- dipr::readTIFF2(fluo_view_tif)
     frid <- syncing$frid
     frida <- syncing$frida
   }
