@@ -11,8 +11,9 @@ The following commands will automatically install packages necessary for running
 
 ```
 install.packages(c("devtools", "ggplot2", "RNiftyReg"))
-source("https://bioconductor.org/biocLite.R")
-biocLite(c("BiocInstaller", "EBImage"))
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("EBImage")
 library(devtools)
 devtools::install_github("tkatsuki/FlyceptionR")
 library(FlyceptionR)
