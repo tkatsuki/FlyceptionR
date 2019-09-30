@@ -40,6 +40,9 @@ FlyceptionR <- function(dir, prefix, autopos=T, interaction=T, reuse=T,
   fly_view_fmf <- paste0(dir, list.files(dir, pattern="^fv.*fmf$"))
   arena_view_fmf <- paste0(dir, list.files(dir, pattern="^av.*fmf$"))
 
+  # Create ouput directory if it doesn't exist
+  dir.create(output_prefix, showWarnings=FALSE, recursive=TRUE)
+
   ## Part 1. Detect flash
   message("Detecting flash in fluo-view")
   fluo_flash <- detect_flash(input=fluo_view_tif,
@@ -133,12 +136,13 @@ FlyceptionR <- function(dir, prefix, autopos=T, interaction=T, reuse=T,
   flref <- EBImage::normalize(EBImage::rotate(EBImage::flip(flref), rotate_camera))
   fvref <- dipr::readFMF(filepath=fly_view_fmf,
                          frames=fly_flash$fvflashes[1])[,,1]/255
+
   center <- align_cameras(flref=flref,
                           fvref=fvref,
                           output=output_prefix,
                           center=c(0, 0),
                           zoom=zoom,
-                          autopos=F)
+                          autopos=autopos)
 
   ## Part 9. Image registration
   registered_images <- register_images(fvimgl=fvimgl,
