@@ -39,6 +39,8 @@ align_cameras <- function(flref, fvref, output, center=c(0, 0), zoom=1, autopos=
     writeImage(flref, file=paste0(output, "_flref.png"))
     writeImage(fvref, file=paste0(output, "_fvref.png"))
     fvrefrs <- resize(fvref, dim(fvref)[1]*zoom)
+    writeImage(fvrefrs, file=paste0(output, "_fvrefrs.png"))
+
     if(dim(fvrefrs)[1] > dim(flref)[1]){
       fncc <- dipr::FNCC(fvrefrs, flref)
       maxpeak <- which(fncc==max(fncc), arr.ind=TRUE)
