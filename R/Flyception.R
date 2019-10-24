@@ -137,8 +137,8 @@ FlyceptionR <- function(dir, prefix, autopos=T, interaction=T, reuse=T,
   fvref <- dipr::readFMF(filepath=fly_view_fmf,
                          frames=fly_flash$fvflashes[1])[,,1]/255
 
-  center <- align_cameras(flref=flref,
-                          fvref=fvref,
+  center <- align_cameras(source=fvref,
+                          template=flref,
                           output=output_prefix,
                           center=c(0, 0),
                           zoom=zoom,

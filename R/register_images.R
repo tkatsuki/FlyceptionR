@@ -28,20 +28,22 @@ register_images <- function(fvimgl, flimgrt, fvimgbwbrfh, angles, output, zoom, 
       registerDoParallel(cores=cores)
       message(paste0("Using ", getDoParWorkers(), " cores..."))
     }
-    # Build affine matrix for rotation
-    aff <- list()
-    for(a in 1:dim(fvimgli)[3]){
-      aff[[a]] <- buildAffine(angles=c(0,0, -angles[frid[a]]), source=fvimgli[,,1], anchor="center")
+
+    # Rotate flyview
+    rot <- fvimgli
+    for (r in 1:dim(rot)[3]){
+      rot[,,r] <- RNiftyReg::rotate(fvimgli[,,r], -angles[r], anchor = c("center"))
     }
-    # Run image registration using the initial angles
+
+    # Run image registration
     regresi <- list()
     if(cores==1){
       for(rg in 1:dim(fvimgli)[3]){
-        regresi[[rg]] <- niftyreg(fvimgli[,,rg], fvimgrt1sti,
-                                  init=aff[[rg]], scope="rigid", symmetric=F)
+        regresi[[rg]] <- niftyreg(rot[,,rg], fvimgrt1sti,
+                                  scope="rigid", symmetric=F)
       }
     }else{
-      regresi <- foreach(rg = 1:dim(fvimgli)[3]) %dopar% niftyreg(fvimgli[,,rg], fvimgrt1sti, init=aff[[rg]], scope="rigid", symmetric=F, internal=FALSE)
+      regresi <- foreach(rg = 1:dim(fvimgli)[3]) %dopar% niftyreg(fvimgli[,,rg], fvimgrt1sti,  scope="rigid", symmetric=F, internal=FALSE)
     }
     regimgi <- array(sapply(regresi, function(x) x$image), dim=dim(fvimgli))
     regimgi[which(is.na(regimgi)==T)] <- 0
@@ -77,16 +79,23 @@ register_images <- function(fvimgl, flimgrt, fvimgbwbrfh, angles, output, zoom, 
                             (round((dim(flimgrt)[2]-dim(regimgi)[2])/2)+dim(regimgi)[2]-1),]
     }
     flimgpadmv <- translate(flimgpad, center)
+
+    # Rotate fluoview
+    flimgrot <- flimgpadmv
+    for (r in 1:dim(flimgrot)[3]){
+      flimgrot[,,r] <- RNiftyReg::rotate(flimgpadmv[,,r], -angles[r], anchor = c("center"))
+    }
+
     flimgrgres <- list()
     if(cores==1){
       for(app in 1:dim(fvimgl)[3]){
-        flimgrgres[[app]] <- applyTransform(forward(regresi[[app]]), flimgpadmv[,,app])
+        flimgrgres[[app]] <- applyTransform(forward(regresi[[app]]), flimgrot[,,app])
       }
     }else{
-      flimgrgres <- foreach(app = 1:dim(fvimgl)[3]) %dopar%  applyTransform(forward(regresi[[app]]), flimgpadmv[,,app])
+      flimgrgres <- foreach(app = 1:dim(fvimgl)[3]) %dopar%  applyTransform(forward(regresi[[app]]), flimgrot[,,app])
     }
-    flimgreg <- array(unlist(flimgrgres), dim=dim(flimgpadmv))
-    writeImage(flimgreg, file=paste0(output, "_flimgreg.tif"))
+    flimgreg <- array(unlist(flimgrgres), dim=dim(flimgrot))
+    writeImage(normalize(flimgreg), file=paste0(output, "_flimgreg.tif"))
     rm(flimgrgres)
     rm(flimgpad)
     rm(flimgpadmv)
@@ -104,13 +113,20 @@ register_images <- function(fvimgl, flimgrt, fvimgbwbrfh, angles, output, zoom, 
 
     fvimgbwbrfhrs <- resize(fvimgbwbrfh, dim(fvimgl)[1]*zoom)
     rm(fvimgbwbrfh)
+
+    rotwin <- fvimgbwbrfhrs
+    for (rwin in 1:dim(rotwin)[3]){
+      rotwin[,,rwin] <- RNiftyReg::rotate(fvimgbwbrfhrs[,,rwin], -angles[rwin], anchor = c("center"))
+    }
+
+
     fvimgbwbrfhreg <- list()
     if(cores==1){
       for(app in 1:dim(fvimgl)[3]){
-        fvimgbwbrfhreg[[app]] <- applyTransform(forward(regresi[[app]]), fvimgbwbrfhrs[,,app])
+        fvimgbwbrfhreg[[app]] <- applyTransform(forward(regresi[[app]]), rotwin[,,app])
       }
     }else{
-      fvimgbwbrfhreg <- foreach(app = 1:dim(fvimgl)[3]) %dopar% applyTransform(forward(regresi[[app]]), fvimgbwbrfhrs[,,app])
+      fvimgbwbrfhreg <- foreach(app = 1:dim(fvimgl)[3]) %dopar% applyTransform(forward(regresi[[app]]), rotwin[,,app])
     }
     fvimgbwbrfhregimg <- array(unlist(fvimgbwbrfhreg), dim=dim(fvimgbwbrfhrs))
     fvimgbwbrfhregimg <- fvimgbwbrfhregimg >= 0.5
