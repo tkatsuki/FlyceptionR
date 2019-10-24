@@ -19,7 +19,7 @@
 #' FlyceptionR()
 #'
 
-FlyceptionR <- function(dir, prefix, autopos=T, interaction=T, reuse=T,
+FlyceptionR <- function(dir, prefix, autopos=T, interaction=T, stimulation=F, reuse=T,
                         fmf2tif=T, zoom=0.85, FOI=F, binning=1, fluo_flash_thresh=10000,
                         fv_flash_thresh=135, av_flash_thresh=100, dist_thresh=4,
                         rotate_camera=-180){
@@ -78,18 +78,20 @@ FlyceptionR <- function(dir, prefix, autopos=T, interaction=T, reuse=T,
                                   interaction=interaction)
 
   ## Part 4. Detect stimulus
-  message("Detecting stimulus")
-  fvtrj <- read.table(paste0(dir, list.files(dir, pattern="fv-traj-")))
-  stimulus <- which(fvtrj[,10]==1)
-  if(length(stimulus)==0){
-    fridstim <- NA
-    message(paste0("No stimulus was detected."))
-  } else {
-    stimfr <- sapply(stimulus, function(x) which.min(abs(syncing$frid-x)))
-    message(paste0("Stimuli were given at the following frames:"))
-    message(stimfr)
-    dfstim <- data.frame(flview=stimfr, flyview=syncing$frid[stimfr], arenaview=syncing$frida[stimfr])
-    write.table(dfstim, paste0(dir, prefix, "_fridstim.txt"))
+  if(stimulation==T){
+    message("Detecting stimulus")
+    fvtrj <- read.table(paste0(dir, list.files(dir, pattern="fv-traj-")))
+    stimulus <- which(fvtrj[,10]==1)
+    if(length(stimulus)==0){
+      fridstim <- NA
+      message(paste0("No stimulus was detected."))
+    } else {
+      stimfr <- sapply(stimulus, function(x) which.min(abs(syncing$frid-x)))
+      message(paste0("Stimuli were given at the following frames:"))
+      message(stimfr)
+      dfstim <- data.frame(flview=stimfr, flyview=syncing$frid[stimfr], arenaview=syncing$frida[stimfr])
+      write.table(dfstim, paste0(dir, prefix, "_fridstim.txt"))
+    }
   }
 
   ## Part 5. Detect interaction
