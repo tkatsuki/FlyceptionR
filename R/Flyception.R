@@ -147,7 +147,8 @@ FlyceptionR <- function(dir, prefix, autopos=T, interaction=T, stimulation=F, re
                           autopos=autopos)
 
   ## Part 9. Image registration
-  registered_images <- register_images(fvimgl=fvimgl,
+  registered_images <- register_images(frid=frid,
+                                       fvimgl=fvimgl,
                                        flimgrt=flimgrt,
                                        fvimgbwbrfh=fvimgbwbrfh,
                                        angles=trj_res$angles,
