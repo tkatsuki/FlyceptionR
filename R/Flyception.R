@@ -181,8 +181,11 @@ FlyceptionR <- function(dir, prefix, autopos=T, interaction=T, stimulation=F, re
   dat <- data.frame(x=(1:length(dFF0int)), y=dFF0int, d=trj_res$flydist[frida])
   p <- ggplot2::ggplot(data=dat, ggplot2::aes(x=x, y=y)) +
     ggplot2::geom_smooth(method="loess", span = 0.4, level=0.95) +
-    ggplot2::ylim(-5, 10) +
-    ggplot2::geom_line(data=dat, ggplot2::aes(x=x, y=d))
+    ggplot2::ylim(-5, 10)
+  # add distance plot if appropriate
+  if (!rlang::is_na(trj_res$flydist)) {
+    P = P + ggplot2::geom_line(data=dat, ggplot2::aes(x=x, y=d))
+  }
   ggplot2::ggsave(filename = paste0(output_prefix, "_dFF0int.pdf"), width = 8, height = 8)
 
   ## Part 13. Create delta F over F0 pseudocolor representation
