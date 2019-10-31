@@ -8,7 +8,7 @@
 #' register_images()
 #'
 
-register_images <- function(fvimgl, flimgrt, fvimgbwbrfh, angles, output, zoom, center, cores=1, saveRDS=F, reuse=F){
+register_images <- function(frid, fvimgl, flimgrt, fvimgbwbrfh, angles, output, zoom, center, cores=1, saveRDS=F, reuse=F){
   message("Performing image registration...")
   if(file.exists(paste0(output, "_regimgi.RDS"))==T &
      file.exists(paste0(output, "_regresi.RDS"))==T & reuse==T){
