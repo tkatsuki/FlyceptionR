@@ -42,6 +42,8 @@ FlyceptionR <- function(dir, prefix, autopos=T, interaction=T, stimulation=F, re
 
   # Create ouput directory if it doesn't exist
   dir.create(output_prefix, showWarnings=FALSE, recursive=TRUE)
+  # Save files within the output directory
+  output_prefix <- file.path(output_prefix, prefix)
 
   ## Part 1. Detect flash
   message("Detecting flash in fluo-view")
@@ -127,7 +129,7 @@ FlyceptionR <- function(dir, prefix, autopos=T, interaction=T, stimulation=F, re
   fvimgl <- dipr::readFMF(fly_view_fmf, frames=frid)
   # Load arena-view camera images
   avimgl <- dipr::readFMF(arena_view_fmf, frames=frida)
-  EBImage::writeImage(avimgl/255, file=paste0(dir, prefix, "_avimgl_fr_", frida[1], "-", tail(frida, n=1), ".tif"))
+  EBImage::writeImage(avimgl/255, file=paste0(output_prefix, "_avimgl_fr_", frida[1], "-", tail(frida, n=1), ".tif"))
   rm(avimgl)
 
   ## Part 7. Detect window on the head
@@ -170,7 +172,7 @@ FlyceptionR <- function(dir, prefix, autopos=T, interaction=T, stimulation=F, re
     intensity_br <- readRDS(paste0(output_prefix, "_intensity_br.RDS"))
   }else{
     intensity_br <- colSums(registered_images$fvimgbwbrfhregimg*registered_images$flimgreg, dims=2)/as.integer(goodfr$objsize)
-    saveRDS(intensity_br, paste0(dir, prefix, "_intensity_br.RDS"))
+    saveRDS(intensity_br, paste0(output_prefix, "_intensity_br.RDS"))
   }
   intensity <- zoo::na.approx(intensity_br)
 
