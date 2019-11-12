@@ -32,7 +32,7 @@ register_images <- function(frid, fvimgl, flimgrt, fvimgbwbrfh, angles, output, 
     # Rotate flyview
     rot <- fvimgli
     for (r in 1:dim(rot)[3]){
-      rot[,,r] <- RNiftyReg::rotate(fvimgli[,,r], -angles[r], anchor = c("center"))
+      rot[,,r] <- RNiftyReg::rotate(fvimgli[,,r], -angles[frid[r]], anchor = c("center"))
     }
 
     # Run image registration
@@ -83,7 +83,7 @@ register_images <- function(frid, fvimgl, flimgrt, fvimgbwbrfh, angles, output, 
     # Rotate fluoview
     flimgrot <- flimgpadmv
     for (r in 1:dim(flimgrot)[3]){
-      flimgrot[,,r] <- RNiftyReg::rotate(flimgpadmv[,,r], -angles[r], anchor = c("center"))
+      flimgrot[,,r] <- RNiftyReg::rotate(flimgpadmv[,,r], -angles[frid[r]], anchor = c("center"))
     }
 
     flimgrgres <- list()
@@ -116,7 +116,7 @@ register_images <- function(frid, fvimgl, flimgrt, fvimgbwbrfh, angles, output, 
 
     rotwin <- fvimgbwbrfhrs
     for (rwin in 1:dim(rotwin)[3]){
-      rotwin[,,rwin] <- RNiftyReg::rotate(fvimgbwbrfhrs[,,rwin], -angles[rwin], anchor = c("center"))
+      rotwin[,,rwin] <- RNiftyReg::rotate(fvimgbwbrfhrs[,,rwin], -angles[frid[rwin]], anchor = c("center"))
     }
 
 
