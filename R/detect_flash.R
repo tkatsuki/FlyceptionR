@@ -18,7 +18,6 @@ detect_flash <- function(input, output, type=c("fluo", "fly", "arena"), flash_th
       flimgint <- readRDS(paste0(output, "_flimgint.RDS"))
     } else{
     message(sprintf("Reading %s", input))
-    message(sprintf("Flash thresh is %f", flash_thresh))
     flimgint <- dipr::readTIFF2(input, intensity=T)
     png(file=paste0(output, "_flflash.png"), width=400, height=400)
     plot(flimgint)
@@ -26,6 +25,19 @@ detect_flash <- function(input, output, type=c("fluo", "fly", "arena"), flash_th
     nframesfl <- dipr::readTIFF2(input, getFrames=T)
     message(paste0("Number of frames in fluo-view: ", nframesfl))
     }
+
+    if (flash_thresh==0) {
+      # Auto-detect threshold.
+      # (Find the largest intensity gap among the brightest 10% of frames.)
+      brightestFrames = sort(flimgint, decreasing = TRUE)[1:(length(flimgint)/10)]
+      frameDiff = -diff(brightestFrames)
+      biggestDiff = which(frameDiff == max(frameDiff))[1]
+      flash_thresh = mean(brightestFrames[biggestDiff:(biggestDiff+1)])
+      message(sprintf("Flash thresh autodetected as %f", flash_thresh))
+    } else {
+      message(sprintf("Flash thresh is %f", flash_thresh))
+    }
+
 
     flflashes <- which(flimgint > flash_thresh)
     # correct for double-flashes from rolling shutter (pick second from each pair)
@@ -43,7 +55,6 @@ detect_flash <- function(input, output, type=c("fluo", "fly", "arena"), flash_th
       fvimgsubint <- readRDS(paste0(output, "_fvimgsubint.RDS"))
     } else{
       message(sprintf("Reading %s", input))
-      message(sprintf("Flash thresh is %f", flash_thresh))
       # Load only diagonal ROIs
       nframesfv <- dipr::readFMF(input, getFrames=T)
       fvimgsub1 <- dipr::readFMF(input, crop=c(5,10,5,10))
@@ -57,6 +68,18 @@ detect_flash <- function(input, output, type=c("fluo", "fly", "arena"), flash_th
       plot(fvimgsubint)
       dev.off()
       saveRDS(fvimgsubint, file=paste0(output, "_fvimgsubint.RDS"))
+    }
+
+    if (flash_thresh==0) {
+      # Auto-detect threshold.
+      # (Find the largest intensity gap among the brightest 10% of frames.)
+      brightestFrames = sort(fvimgsubint, decreasing = TRUE)[1:(length(fvimgsubint)/10)]
+      frameDiff = -diff(brightestFrames)
+      biggestDiff = which(frameDiff == max(frameDiff))[1]
+      flash_thresh = mean(brightestFrames[biggestDiff:(biggestDiff+1)])
+      message(sprintf("Flash thresh autodetected as %f", flash_thresh))
+    } else {
+      message(sprintf("Flash thresh is %f", flash_thresh))
     }
 
     fvflashes <- which(fvimgsubint > flash_thresh)
@@ -73,7 +96,6 @@ detect_flash <- function(input, output, type=c("fluo", "fly", "arena"), flash_th
       avimgsubint <- readRDS(paste0(output, "_avimgsubint.RDS"))
      }else{
       message(sprintf("Reading %s", input))
-      message(sprintf("Flash thresh is %f", flash_thresh))
       nframesav <- dipr::readFMF(input, getFrames=T)
       avimgsub <- dipr::readFMF(input, crop=c(5,10,5,10))
       avimgsubint <- colMeans(avimgsub, dim=2)
@@ -83,6 +105,19 @@ detect_flash <- function(input, output, type=c("fluo", "fly", "arena"), flash_th
       dev.off()
       saveRDS(avimgsubint, file=paste0(output, "_avimgsubint.RDS"))
     }
+
+    if (flash_thresh==0) {
+      # Auto-detect threshold.
+      # (Find the largest intensity gap among the brightest 10% of frames.)
+      brightestFrames = sort(avimgsubint, decreasing = TRUE)[1:(length(avimgsubint)/10)]
+      frameDiff = -diff(brightestFrames)
+      biggestDiff = which(frameDiff == max(frameDiff))[1]
+      flash_thresh = mean(brightestFrames[biggestDiff:(biggestDiff+1)])
+      message(sprintf("Flash thresh autodetected as %f", flash_thresh))
+    } else {
+      message(sprintf("Flash thresh is %f", flash_thresh))
+    }
+
 
     avflashes <- which(avimgsubint > flash_thresh)
     avimgflash <- min(avflashes)
