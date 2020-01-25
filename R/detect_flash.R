@@ -53,6 +53,7 @@ detect_flash <- function(input, output, type=c("fluo", "fly", "arena"), flash_th
     if(file.exists(paste0(output, "_fvimgsubint.RDS"))==T & reuse==T){
       message("Loading from RDS file")
       fvimgsubint <- readRDS(paste0(output, "_fvimgsubint.RDS"))
+      nframesfv <- readRDS(paste0(output, "_nframesfv.RDS"))
     } else{
       message(sprintf("Reading %s", input))
       # Load only diagonal ROIs
@@ -68,6 +69,7 @@ detect_flash <- function(input, output, type=c("fluo", "fly", "arena"), flash_th
       plot(fvimgsubint)
       dev.off()
       saveRDS(fvimgsubint, file=paste0(output, "_fvimgsubint.RDS"))
+      saveRDS(nframesfv, file=paste0(output, "_nframesfv.RDS"))
     }
 
     if (flash_thresh==0) {
@@ -94,6 +96,7 @@ detect_flash <- function(input, output, type=c("fluo", "fly", "arena"), flash_th
     if(file.exists(paste0(output, "_avimgsubint.RDS"))==T & reuse==T){
       message("Loading from RDS file")
       avimgsubint <- readRDS(paste0(output, "_avimgsubint.RDS"))
+      nframesav <- readRDS(paste0(output, "_nframesav.RDS"))
      }else{
       message(sprintf("Reading %s", input))
       nframesav <- dipr::readFMF(input, getFrames=T)
@@ -104,6 +107,7 @@ detect_flash <- function(input, output, type=c("fluo", "fly", "arena"), flash_th
       plot(avimgsubint)
       dev.off()
       saveRDS(avimgsubint, file=paste0(output, "_avimgsubint.RDS"))
+      saveRDS(nframesav, file=paste0(output, "_nframesav.RDS"))
     }
 
     if (flash_thresh==0) {

@@ -29,6 +29,9 @@ FlyceptionR <- function(dir, prefix, autopos=T, interaction=T, stimulation=F, re
   # Create frame
   # Parallelism
 
+  # ensure that dir ends with a slash:
+  dir = paste0(normalizePath(dir, winslash="/"), "/")
+
   ## Part 0. Initialization
   # Start logging
   rlogging::SetLogFile(base.file=paste0(prefix, "_log.txt"), folder=dir)
@@ -225,10 +228,22 @@ FlyceptionR <- function(dir, prefix, autopos=T, interaction=T, stimulation=F, re
   plotrix::draw.ellipse(0,0,11.0795*20,10*20)
   dev.off()
 
-  ## Part 16. Convert fmf to tif format
+  ## Part 16. Convert fmf to tif format, if tif doesn't exist yet
   if(fmf2tif==T){
-    dipr::fmf2tif(paste0(dir, list.files(dir, pattern="^fv.*fmf$")), skip=10)
-    dipr::fmf2tif(paste0(dir, list.files(dir, pattern="^av.*fmf$")), skip=2)
+    for (fvFile in list.files(dir, pattern="^fv.*fmf$")) {
+      tiffFile = paste0(substr(fvFile, 1, nchar(fvFile) - 4), ".tif")
+      if (!file.exists(paste0(dir, tiffFile))) {
+        message(paste0("fv.tiff doesn't exist yet: ", tiffFile))
+        dipr::fmf2tif(paste0(dir, fvFile), skip=10)
+      }
+    }
+    for (avFile in list.files(dir, pattern="^av.*fmf$")) {
+      tiffFile = paste0(substr(avFile, 1, nchar(avFile) - 4), ".tif")
+      if (!file.exists(paste0(dir, tiffFile))) {
+        message(paste0("av.tiff doesn't exist yet: ", tiffFile))
+        dipr::fmf2tif(paste0(dir, avFile), skip=2)
+      }
+    }
   }
 
   message("Finished processing!")

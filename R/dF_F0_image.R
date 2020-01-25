@@ -39,16 +39,17 @@ dF_F0_image <- function(flimgreg, fvimgbwbrfhregimg, regimgi, colmax=F, cmin, cm
   dFF0finmaskfly <- dFF0fin*dFF0finmask+dFF0regimg/255
   writeImage(dFF0finmaskfly, bits.per.sample = 8,
              file=paste0(output, "_dFF0finmaskfly.tif"))
-  writeImage(Fmean, bits.per.sample = 8,
+  writeImage(Fmean/255, bits.per.sample = 8,
              file=paste0(output, "_Fmean.tif"))
-  writeImage(F0, bits.per.sample = 8,
+  writeImage(F0/255, bits.per.sample = 8,
              file=paste0(output, "_F0.tif"))
   writeImage(dFF0maskedpos, bits.per.sample = 8,
              file=paste0(output, "_dF_F0_median_masked.tif"))
   if ((length(goodfr)>1) && any(goodfr)) {
-    writeImage(dFF0finmaskfly@.Data[,,,goodfr], bits.per.sample = 8,
+    writeImage(Image(dFF0finmaskfly@.Data[,,,goodfr], colormode="Color"),
+                        bits.per.sample = 8,
                         file=paste0(output, "_dFF0finmaskfly_goodfr_.tif"))
-    writeImage(Fmean[,,goodfr], bits.per.sample = 8,
+    writeImage(Fmean[,,goodfr]/255, bits.per.sample = 8,
                file=paste0(output, "_Fmean_goodfr_.tif"))
     writeImage(dFF0maskedpos[,,goodfr], bits.per.sample = 8,
                file=paste0(output, "_dF_F0_median_masked_goodfr_.tif"))

@@ -78,10 +78,13 @@ align_cameras <- function(source, template, output, center=c(0, 0), zoom=1, auto
     template_mv <- EBImage::translate(template_pad, center)
     EBImage::writeImage(normalize(source_rs), file=paste0(output, "_source_aligned.png"))
     EBImage::writeImage(normalize(template_mv), file=paste0(output, "_template_aligned.png"))
+    EBImage::writeImage(normalize(source_rs + template_mv), file=paste0(output, "_aligned.png"))
     EBImage::writeImage(normalize(fncc), file=paste0(output, "_fncc.png"))
 
   }
-  message(sprintf("FNCC max peak was: x=%d, y=%d", maxpeak[1], maxpeak[2]))
-  message(sprintf("Center offset: x=%d, y=%d", center[1], center[2]))
+  if(autopos==T){
+    message(sprintf("FNCC max peak was: x=%d, y=%d", maxpeak[1], maxpeak[2]))
+    message(sprintf("Center offset: x=%d, y=%d", center[1], center[2]))
+  }
   return(center)
 }

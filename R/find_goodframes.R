@@ -52,6 +52,10 @@ find_goodframes <- function(window_mask, fvimgl, output, motion_thresh=10, dist_
   }
   sharpfr <- which(quantcnt > sharp_thresh)
   message(sprintf("The following frames are blurry: %s", paste((1:length(quantcnt))[-sharpfr], collapse=" ")))
+  if (all(quantcnt <= sharp_thresh)) {
+    message(sprintf("Warning: ALL frames are blurry"))
+  }
+
 
   # Intersect results
   goodfr <- Reduce(intersect, list(goodsizefr, goodposfr, goodmotionfr, sharpfr))
